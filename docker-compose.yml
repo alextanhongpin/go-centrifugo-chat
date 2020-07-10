@@ -1,0 +1,13 @@
+version: "3.7"
+services:
+  redis:
+    image: redis:5.0.5-alpine
+    ports:
+      - 127.0.0.1:6379:6379
+  centrifugo:
+    image: centrifugo/centrifugo:v2.5
+    command: centrifugo -c config.json --admin
+    volumes:
+      - ./conf/centrifugo:/centrifugo
+    ports:
+      - 127.0.0.1:9000:8000
