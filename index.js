@@ -43,7 +43,7 @@ class Chat {
     this.#centrifuge = new Centrifuge(
       "ws://localhost:9000/connection/websocket",
       {
-        subscribeEndpoint: "http://localhost:8080/centrifuge/subscribe"
+        subscribeEndpoint: "http://localhost:8080/subscribe"
       }
     );
     this.#centrifuge.on("connect", function(ctx) {
@@ -118,6 +118,7 @@ async function main() {
     },
     // NOTE: The ordering 1,2 and 2,1 is not the same.
     // Also, channel names are limited to 255 characters.
+    // 1 and 2 refers to the user id 1 and 2.
     channel: "$chat:#1,2"
   };
 

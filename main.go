@@ -41,7 +41,7 @@ func main() {
 	secret := []byte(os.Getenv("CENTRIFUGO_JWT_SECRET"))
 
 	mux.HandleFunc("/register", newRegister(secret))
-	mux.HandleFunc("/centrifuge/subscribe", newChannel(secret))
+	mux.HandleFunc("/subscribe", newSubscribe(secret))
 	mux.HandleFunc("/publish", newPublish(client))
 
 	log.Println("listening to server on *:8080")
@@ -84,9 +84,8 @@ func newRegister(secret []byte) http.HandlerFunc {
 	}
 }
 
-func newChannel(secret []byte) http.HandlerFunc {
+func newSubscribe(secret []byte) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		log.Println("subscribe")
 		setupResponse(&w, r)
 		if r.Method == "OPTIONS" {
 			return
