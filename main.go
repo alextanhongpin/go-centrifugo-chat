@@ -86,6 +86,7 @@ func newRegister(secret []byte) http.HandlerFunc {
 
 func newChannel(secret []byte) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		log.Println("subscribe")
 		setupResponse(&w, r)
 		if r.Method == "OPTIONS" {
 			return

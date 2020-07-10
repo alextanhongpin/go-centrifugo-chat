@@ -3,5 +3,31 @@
   "token_hmac_secret_key": "a92c864f-52b3-4a53-8268-0ae1d120345f",
   "admin_password": "4ddbb7fc-774b-4882-9129-1a0e75ff48b5",
   "admin_secret": "dee7eb7a-8849-45a2-b667-498b540956f4",
-  "api_key": "d203630f-c469-4e08-b2ae-8b26a9563e35"
+  "api_key": "d203630f-c469-4e08-b2ae-8b26a9563e35",
+  "engine": "redis",
+  "redis_host": "redis",
+  "redis_port": 6379,
+  "presence": true,
+  "join_leave": true,
+  "history_size": 10,
+  "history_lifetime": 300,
+  "history_recover": true,
+  "namespaces": [
+        {
+          "name": "public",
+          "publish": true,
+          "anonymous": true,
+          "history_size": 10,
+          "history_lifetime": 300,
+          "history_recover": true
+        },
+        {
+          "name": "chat",
+          "presence": true,
+          "join_leave": true,
+          "history_size": 10,
+          "history_lifetime": 300,
+          "history_recover": true
+        }
+    ]
 }

@@ -116,7 +116,9 @@ async function main() {
       email: "john.doe@mail.com",
       password: "12345678"
     },
-    channel: "$john.alice"
+    // NOTE: The ordering 1,2 and 2,1 is not the same.
+    // Also, channel names are limited to 255 characters.
+    channel: "$chat:#1,2"
   };
 
   const chat = new Chat();
@@ -171,6 +173,8 @@ async function main() {
     "click",
     function() {
       const { email, password } = isAlice ? db.alice : db.john;
+
+      timeout && window.clearTimeout(timeout);
       Api.publish(email, password, db.channel, {
         value: message.value
       });
