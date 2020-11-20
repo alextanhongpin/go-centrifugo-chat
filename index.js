@@ -39,6 +39,8 @@ function $(id) {
 class Chat {
   #centrifuge = null;
   #channels = {};
+  #isAlice = false;
+
   constructor() {
     this.#centrifuge = new Centrifuge(
       "ws://localhost:9000/connection/websocket",
@@ -55,6 +57,10 @@ class Chat {
     });
   }
 
+  setIsAlice(isAlice) {
+    this.#isAlice = isAlice;
+  }
+
   init(token) {
     this.#centrifuge.setToken(token);
     this.#centrifuge.connect();
@@ -65,15 +71,31 @@ class Chat {
   }
 
   subscribe(channel = "channel") {
+    const currentUser = this.#isAlice;
     const callbacks = {
       publish: function(ctx) {
         // See below description of message format
-        console.log(ctx);
+        console.log({ ctx });
 
-        const $container = $("counter");
-        $container.innerHTML += ctx.data.value;
-        $container.innerHTML += "\n";
-        document.title = ctx.data.value;
+        const { value, isAlice } = ctx.data;
+        switch (value) {
+          case "start_typing":
+            // Only show the typing message to the other user.
+            if (isAlice === currentUser) return;
+            $("typing").innerHTML = "typing...";
+            return;
+          case "end_typing":
+            $("typing").innerHTML = "";
+            return;
+          default:
+            const $div = document.createElement("div");
+            $div.classList.add(isAlice === currentUser ? "right" : "left");
+            $div.innerHTML = `<span>${value}</span>`;
+            $("chat").appendChild($div);
+            // Clear input.
+            $("message").value = "";
+            document.title = value;
+        }
       },
       join: function(message) {
         // See below description of join message format
@@ -96,6 +118,12 @@ class Chat {
         console.log("unsubscribe", context);
       }
     };
+    // If the user is already subscribe to the channel, remove the old
+    // subscription and all listeners.
+    if (this.#channels[channel]) {
+      this.#centrifuge.unsubscribe();
+      this.#centrifuge.removeAllListeners();
+    }
     this.#channels[channel] = this.#centrifuge.subscribe(channel, callbacks);
   }
 }
@@ -106,7 +134,8 @@ async function main() {
   const $alice = $("alice");
   const $message = $("message");
   const $submit = $("submit");
-  const $container = $("counter");
+  const $container = $("chat");
+  const $who = $("who");
   const db = {
     alice: {
       email: "alice@mail.com",
@@ -127,7 +156,14 @@ async function main() {
   $john.addEventListener(
     "click",
     async function() {
+      $alice.remove();
+      $john.remove();
+      $("who").innerText = "Logging in as John";
       isAlice = false;
+      chat.setIsAlice(isAlice);
+      $message.disabled = false;
+      $submit.disabled = false;
+
       const { email, password } = db.john;
       const { accessToken } = await Api.register(email, password);
       chat.init(accessToken);
@@ -139,7 +175,14 @@ async function main() {
   $alice.addEventListener(
     "click",
     async function() {
+      $alice.remove();
+      $john.remove();
+      $("who").innerText = "Logging in as Alice";
       isAlice = true;
+      chat.setIsAlice(isAlice);
+      $message.disabled = false;
+      $submit.disabled = false;
+
       const { email, password } = db.alice;
       const { accessToken } = await Api.register(email, password);
       chat.init(accessToken);
@@ -152,12 +195,13 @@ async function main() {
   let isTyping = false;
   $message.addEventListener("keyup", function() {
     if (!isTyping) {
+      isTyping = true;
       // Only if the user is on the current chat.
       const { email, password } = isAlice ? db.alice : db.john;
       Api.publish(email, password, db.channel, {
-        value: "typing..."
+        value: "start_typing",
+        isAlice
       });
-      isTyping = true;
     }
     timeout && window.clearTimeout(timeout);
     timeout = window.setTimeout(() => {
@@ -165,9 +209,10 @@ async function main() {
 
       const { email, password } = isAlice ? db.alice : db.john;
       Api.publish(email, password, db.channel, {
-        value: "done typing"
+        value: "end_typing",
+        isAlice
       });
-    }, 2500);
+    }, 500);
   });
 
   $submit.addEventListener(
@@ -177,7 +222,8 @@ async function main() {
 
       timeout && window.clearTimeout(timeout);
       Api.publish(email, password, db.channel, {
-        value: message.value
+        value: message.value,
+        isAlice
       });
     },
     false

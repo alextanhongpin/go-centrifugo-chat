@@ -1,17 +1,54 @@
 <html>
-    <head>
-        <title>Centrifugo quick start</title>
-    </head>
-    <body>
-        <div id="counter">-</div>
-	<button id='john'>Login as John</button>
-	<button id='alice'>Login as Alice</button>
+  <head>
+    <title>Centrifugo quick start</title>
+    <style>
+      .left {
+        text-align: left;
+      }
+      .left span {
+        color: white;
+        background: #4488ff;
+      }
+      .right {
+        text-align: right;
+      }
+      .right span {
+        border: 1px solid #eee;
+      }
+      .left span,
+      .right span {
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        display: inline-block;
+      }
 
-	<input type='text' id='message' placeholder='Enter message here'/>
-	<button id='submit'>Submit</button>
+      #action {
+        display: grid;
+        grid-template-columns: 1fr max-content;
+        grid-column-gap: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Chat</h1>
+    <p id="who"></p>
+    <button id="john">Login as John</button>
+    <button id="alice">Login as Alice</button>
 
-        <script src="https://cdn.jsdelivr.net/gh/centrifugal/centrifuge-js@2.6.4/dist/centrifuge.min.js"></script>
-        <script type="text/javascript" src='./index.js'>
-        </script>
-    </body>
+    <div id="chat">No messages</div>
+    <div id="typing"></div>
+
+    <div id="action">
+      <input
+        type="text"
+        id="message"
+        placeholder="Enter message here"
+        disabled="true"
+      />
+      <button id="submit" disabled="true">Submit</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/gh/centrifugal/centrifuge-js@2.6.4/dist/centrifuge.min.js"></script>
+    <script type="text/javascript" src="./index.js"></script>
+  </body>
 </html>
