@@ -1,0 +1,4 @@
+github.com/centrifugal/gocent v1.0.1 h1:8jRe9hM5wS5vyc7NvSEL2f8NELgeGy79E7QgmNl8jpE=
+github.com/centrifugal/gocent v2.1.0+incompatible h1:RpN9cyzw9nkebt3VvzmIJ1fvxaEiyYAs9nlGN3lbCnA=
+github.com/centrifugal/gocent v2.1.0+incompatible/go.mod h1:gtbj3+fMApCIcaGmGvk2BinwEauUtGeu8YZPLcedOvQ=
+github.com/dgrijalva/jwt-go v3.2.0+incompatible/go.mod h1:E3ru+11k8xSBh+hMPgOLZmtrrCbhqsmaPHjLKYnJCaQ=
